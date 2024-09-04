@@ -139,3 +139,57 @@ If you don't want a self-hosted bridge anymore, you can delete it using
 it from the Beeper servers (e.g. any rooms and ghost users it created).
 For official bridges, it will also delete the local data directory with the
 bridge config, database and python virtualenv (if applicable).
+
+### Updating bbctl
+To update bbctl to the latest version, run `bbctl -u`. This will trigger the update process, which includes checking the OS and architecture, backing up the current bbctl binary, downloading and installing the latest version, and checking permissions and functionality.
+
+### Automated Updates
+You can set up automated updates for bbctl using `cron` or `launchd`.
+
+#### Using cron (Linux)
+1. Open your crontab file:
+   ```sh
+   crontab -e
+   ```
+2. Add the following line to run the update command daily at 2 AM:
+   ```sh
+   0 2 * * * /usr/local/bin/bbctl -u
+   ```
+
+#### Using launchd (macOS)
+1. Create a plist file at `~/Library/LaunchAgents/com.beeper.bbctl.update.plist` with the following content:
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+   <plist version="1.0">
+   <dict>
+       <key>Label</key>
+       <string>com.beeper.bbctl.update</string>
+       <key>ProgramArguments</key>
+       <array>
+           <string>/usr/local/bin/bbctl</string>
+           <string>-u</string>
+       </array>
+       <key>StartCalendarInterval</key>
+       <dict>
+           <key>Hour</key>
+           <integer>2</integer>
+           <key>Minute</key>
+           <integer>0</integer>
+       </dict>
+   </dict>
+   </plist>
+   ```
+2. Load the plist file:
+   ```sh
+   launchctl load ~/Library/LaunchAgents/com.beeper.bbctl.update.plist
+   ```
+
+### Configuring Auto-Start and Optional Notification or Auto-Reboot
+You can configure auto-start of the bridge manager at boot and enable optional notifications or auto-reboot after updates.
+
+#### Auto-Start
+For macOS, generate a launchd plist file to trigger the bridge manager at boot. For Linux, create a cron job or systemd service that does the same.
+
+#### Optional Notification or Auto-Reboot
+Inside the bbctl app configuration, add a setting that allows users to enable or disable notifications or automatic reboots after bbctl updates. If the auto-reboot option is enabled, the system will gracefully reboot after the update is applied.

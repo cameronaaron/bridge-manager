@@ -150,6 +150,13 @@ var app = &cli.App{
 		configCommand,
 		runCommand,
 		proxyCommand,
+		&cli.Command{
+			Name:  "update",
+			Usage: "Update bbctl to the latest version",
+			Action: func(ctx *cli.Context) error {
+				return updateBBCTL()
+			},
+		},
 	},
 }
 
@@ -178,5 +185,10 @@ func RequiresAuth(ctx *cli.Context) error {
 	if !GetEnvConfig(ctx).HasCredentials() {
 		return UserError{"You're not logged in"}
 	}
+	return nil
+}
+
+func updateBBCTL() error {
+	// Placeholder for the update logic
 	return nil
 }
